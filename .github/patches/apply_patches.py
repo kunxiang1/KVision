@@ -96,11 +96,13 @@ for tgt, ind in (("kvision", ""),
 
 # 4. windows.h before Hikvision SDK headers (they use HWND/LONG when _WIN32),
 #    NOMINMAX/WIN32_LEAN_AND_MEAN so Qt sources keep compiling.
+#    /Zc:__cplusplus: without it MSVC reports __cplusplus as 199711L even in
+#    C++17 mode, which trips QmlAVThread's static_assert.
 patch(cm,
 "if(DEFINED VER_REL AND ${VER_REL} GREATER 0)",
 """if(WIN32)
     add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
-    add_compile_options(/FIwindows.h)
+    add_compile_options(/FIwindows.h /Zc:__cplusplus)
 endif()
 
 if(DEFINED VER_REL AND ${VER_REL} GREATER 0)""")
@@ -159,6 +161,19 @@ patch("src/qmlav/src/qmlavutils.h",
         return ret;
 #endif
     }""")
+
+# 9. MSVC picks the shared_ptr(nullptr_t, deleter) overload and deduces the
+#    deleter argument as AVDictionary* instead of AVDictionary**, so `delete p`
+#    fails with C2541. Name the parameter type explicitly.
+patch("src/qmlav/src/qmlavoptions.h",
+"""    std::shared_ptr<AVDictionary *> m_avDict = std::shared_ptr<AVDictionary *>(new AVDictionary *{}, [](auto p) {
+        av_dict_free(p);
+        delete p;
+    });""",
+"""    std::shared_ptr<AVDictionary *> m_avDict = std::shared_ptr<AVDictionary *>(new AVDictionary *{}, [](AVDictionary **p) {
+        av_dict_free(p);
+        delete p;
+    });""")
 
 MARK.write_text("ok\n", encoding="utf-8")
 print("all patches applied")
