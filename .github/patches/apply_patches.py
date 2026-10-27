@@ -101,4 +101,14 @@ if(DEFINED VER_REL AND ${VER_REL} GREATER 0)""")
 for f in ("src/main.cpp", "src/systemstats.cpp"):
     patch(f, "#include <unistd.h>\n#include <sys/types.h>", WIN_SHIM.rstrip() + "\n#include <sys/types.h>")
 
+# 5. The unit-test target needs GTest and is an ALL target (ctest runs during
+#    the build). Not worth installing GTest on Windows -> skip tests there.
+patch("src/qmlav/CMakeLists.txt",
+"""if (NOT ANDROID)
+    add_subdirectory(src/tests)
+endif()""",
+"""if (NOT ANDROID AND NOT WIN32)
+    add_subdirectory(src/tests)
+endif()""")
+
 print("all patches applied")
