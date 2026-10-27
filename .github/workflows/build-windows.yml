@@ -25,7 +25,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           pip install aqtinstall
-          aqt install-qt windows desktop 5.15.2 win64_msvc2019_64 --outputdir D:\a\qt --archives qtbase qtdeclarative qtmultimedia qttools qttranslations qtsvg
+          aqt install-qt windows desktop 5.15.2 win64_msvc2019_64 --outputdir D:\a\qt --archives qtbase qtdeclarative qtmultimedia qttools qttranslations qtsvg qtquickcontrols2 qtquickcontrols qtgraphicaleffects
           $qt = "D:\a\qt\5.15.2\msvc2019_64"
           if (-not (Test-Path "$qt\bin\windeployqt.exe")) { throw "Qt install incomplete: $qt" }
           "QT_DIR=$qt" | Out-File -FilePath $env:GITHUB_ENV -Append
