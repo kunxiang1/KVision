@@ -74,7 +74,7 @@ jobs:
             } | Select-Object -Unique
             if (-not $names) { throw "no exports parsed from $dll" }
             Write-Host "$dll -> $($names.Count) exports"
-            ("EXPORTS`n" + ($names -join "`n")) | Out-File -Encoding ascii "$dll.def"
+            ("LIBRARY $dll`nEXPORTS`n" + ($names -join "`n")) | Out-File -Encoding ascii "$dll.def"
             & $libexe "/def:$dll.def" "/machine:x64" "/out:sdklib\$($dll -replace '\.dll$','.lib')"
             if (-not (Test-Path "sdklib\$($dll -replace '\.dll$','.lib')")) { throw "lib.exe produced nothing for $dll" }
           }

@@ -175,5 +175,18 @@ patch("src/qmlav/src/qmlavoptions.h",
         delete p;
     });""")
 
+# 10. Build kvision as a GUI app; the default console subsystem puts a black
+#     window behind the Qt window on Windows.
+patch(cm,
+"""else()
+    add_executable(kvision ${PROJ_FILES} ${QMLAV_FILES})
+endif()""",
+"""else()
+    add_executable(kvision ${PROJ_FILES} ${QMLAV_FILES})
+    if(WIN32)
+        set_target_properties(kvision PROPERTIES WIN32_EXECUTABLE TRUE)
+    endif()
+endif()""")
+
 MARK.write_text("ok\n", encoding="utf-8")
 print("all patches applied")
