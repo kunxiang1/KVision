@@ -25,10 +25,10 @@ jobs:
           aqt install-qt windows desktop 5.15.2 win64_msvc2019_64 --outputdir D:\a\qt --archives qtbase qtdeclarative qtmultimedia qttools qttranslations qtsvg
           echo "QT_DIR=D:\a\qt\5.15.2\msvc2019_64" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Download FFmpeg 6.1 shared (BtbN)
+      - name: Download FFmpeg 8.1 shared (BtbN)
         shell: pwsh
         run: |
-          $u = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n6.1-latest-win64-gpl-shared-6.1.zip"
+          $u = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n8.1-latest-win64-gpl-shared-8.1.zip"
           Invoke-WebRequest -Uri $u -OutFile ffmpeg.zip -UserAgent "curl"
           Expand-Archive ffmpeg.zip -DestinationPath ffmpeg
           $d = (Get-ChildItem ffmpeg -Directory | Select-Object -First 1).FullName
