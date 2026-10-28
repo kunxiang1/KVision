@@ -54,6 +54,15 @@
 4. 补丁跑完，**在生成的文件上 grep 或 assert 验一遍再推**。文本补丁打在模板字符串上而不是产物上，静默失效很难发现。
 5. JS 里 `"a" + b === c` 因 `+` 优先级高于 `===`，比较的是整串，会打出裸 `false`。
 
+## 状态（2026-10-28 跟进上游）
+
+- 上游 `master` 已到 `796ac19`（v2.7.2 + HW 解码回退/Auto-Sub 码流/QML 错误日志/LNG_00549）。PR #6 中文翻译已合并。
+- 本仓库 `master` = 上游 `796ac19` + 1 个 commit（`.github/` 两个文件 + 本文件），历史已压平；旧 40 个 commit 在本地分支 `backup/pre-upstream-796ac19`。
+- 上游吃掉了我方 5 个补丁，`apply_patches.py` 里已删：`AVDictionary**` deleter(9)、Auto 码流 `secondaryUrl` 门闸(11)、硬解失败回退(15)、QML 硬错误日志(18)、波兰语硬编码标签(20)。上游的回退版本还多了 `m_hwOutput.reset()`，比我们原来那版更完整。
+- 分支 `ci/windows-build`（上游 master + 2 个真实提交：MSVC 可编译 + CI workflow）已开 PR `Arkanista/KVision#7`。这条分支**不用**补丁脚本，源码直接改。以后上游合并了就把它并回 `master`，`apply_patches.py` 相应再删。
+- 构建验证：master 与 ci/windows-build 两个 workflow run 都是 success（126MB zip）。
+- 注意：带 `workflow_dispatch` 触发会走 publish，覆盖 `windows-latest` 资产 —— 拿新版验完记得用 master 再 dispatch 一次恢复完整版。
+
 ## 关键 ID
 
 - 上游 PR：`Arkanista/KVision#6`（中文翻译）
